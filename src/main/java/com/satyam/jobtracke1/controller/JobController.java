@@ -5,6 +5,7 @@ import com.satyam.jobtracke1.service.JobService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +48,24 @@ public class JobController {
     public ResponseEntity<String> deleteJob(@PathVariable Long id) {
         jobService.deleteJob(id);
         return ResponseEntity.ok("Job deleted successfully");
+    }
+
+    // Pagination ke saath sabhi jobs
+    @GetMapping("/paged")
+    @Operation(summary = "Pagination ke saath jobs dekho")
+    public ResponseEntity<Page<Job>> getJobsByPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(jobService.getJobsByPage(page, size));
+    }
+
+    // Status filter + pagination
+    @GetMapping("/status/{status}")
+    @Operation(summary = "Status se filter karo pagination ke saath")
+    public ResponseEntity<Page<Job>> getJobsByStatus(
+            @PathVariable String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(jobService.getJobsByStatus(status, page, size));
     }
 }
